@@ -3,12 +3,34 @@ import './index.scss';
 import { Success } from './components/Success';
 import { Users } from './components/Users';
 
-// Тут список пользователей: https://reqres.in/api/users
+//  https://reqres.in/api/users
 
 function App() {
+  const [users, setUsers] = React.useState([]);
+  const [invite, setInvite] =React.useState([]);
+  const [isLoading, setLoading] = React.useState(true);
+  const [searchValue, setSearchValue] = React.useState('');
+
+  React.useEffect(() => {
+    fetch('https://reqres.in/api/users')
+      .then(res => res.json())
+      .then(json => {
+      setUsers(json.data);
+    })
+    .catch((err) => {
+      console.warn(err);
+      alert('oops failed, try again...')
+    }).finally(() => setLoading(false));
+    }, []);
+
+    const onChangeSearchValue = (event) => {
+        setSearchValue(event.target.value);
+    }
+
+
   return (
     <div className="App">
-      <Users />
+      <Users onChangeSearchValue={onChangeSearchValue} searchValue={searchValue} items={users} isLoading={isLoading} />
       {/* <Success /> */}
     </div>
   );
